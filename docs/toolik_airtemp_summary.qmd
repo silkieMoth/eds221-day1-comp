@@ -1,6 +1,8 @@
 ---
 title: "Toolik Station Air Temperature"
 format: html
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -83,3 +85,54 @@ ggsave(here::here("figs", "toolik_temp_plot.png"), height = 6, width = 7)
 Now try changing something about the ggplot code, and re-run your `ggsave()` line above. Does your saved figure change? Great!
 
 ## End Example 1
+
+```{r}
+toolik_chlorophyll <- read_csv(here::here("data", "data-raw", "toolik_chlorophyll.csv"))
+```
+
+```{r}
+# skim is a summary stats package
+# do u need this line to run dim and names?
+skimr::skim(toolik_chlorophyll)
+```
+
+```{r}
+# clean_names() makes names easier to read
+# in this case it just removes capital letters
+toolik_chlorophyll <- toolik_chlorophyll %>% clean_names()
+```
+
+
+```{r}
+# summry stats functions
+dim(toolik_chlorophyll)
+names(toolik_chlorophyll)
+```
+
+```{r}
+# we are replacing blank values (in this case ".") with NAs 
+# dollar sign operator grabs a column in a table
+toolik_chlorophyll$active_chl_a_ug_l <- na_if(toolik_chlorophyll$active_chl_a_ug_l, ".")
+
+
+```
+
+
+```{r}
+#as.numeric turns a character into a numeric value, including NAs
+toolik_chlorophyll$active_chl_a_ug_l <- as.numeric(toolik_chlorophyll$active_chl_a_ug_l)
+```
+
+```{r}
+toolik_chlorophyll_plot <- ggplot(data = toolik_chlorophyll, 
+       aes(x = depth, y = active_chl_a_ug_l)) + 
+  geom_point(aes(color = active_chl_a_ug_l), show.legend = FALSE) + 
+  scale_color_gradient(low = "blue", high = "orange") +
+  theme_minimal() + labs(title = "faskjfawnkfjaf", x = "depth", y= "chloro conc (mm/L)")
+```
+
+```{r}
+# safe the graph you just made
+ggsave(here::here("figs", "toolik_chlorophyll_plot.png"), height = 6, width = 7)
+```
+
